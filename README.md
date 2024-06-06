@@ -1,1 +1,1 @@
-# ECS-170-Sport-Betting-
+# ECS-170-Sport-Betting-AI
