@@ -1,0 +1,110 @@
+/* Global styles */
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: #E1E1E1;
+    color: #010000;
+    margin: 0;
+    padding: 0;
+}
+
+/* Header styles */
+header {
+    background-color: #E73725;
+    color: #FFFFFF;
+    padding: 1rem 0;
+    text-align: center;
+    font-family: 'Oswald', sans-serif;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2.5rem;
+}
+
+nav {
+    margin-top: 10px;
+}
+
+nav a {
+    color: #FFFFFF;
+    margin: 0 15px;
+    text-decoration: none;
+    font-family: 'Bebas Neue', sans-serif;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+/* Section styles */
+section {
+    padding: 2rem;
+    margin: 1rem 0;
+    background-color: #FFFFFF;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* Sport section specific styles */
+.sport-section {
+    background-color: #E1E1E1;
+    color: #010000;
+    padding: 2rem;
+    margin: 1rem 0;
+}
+
+.sport-section h2 {
+    margin-top: 0;
+    font-family: 'Anton', sans-serif;
+}
+
+/* Form styles */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+form label {
+    margin: 10px 0 5px;
+    color: #010000;
+}
+
+form input {
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #010000;
+    border-radius: 5px;
+}
+
+form button {
+    padding: 10px;
+    background-color: #E73725;
+    color: #FFFFFF;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-family: 'Bebas Neue', sans-serif;
+}
+
+form button:hover {
+    background-color: #010000;
+    color: #FFFFFF;
+}
+
+/* Results styles */
+.results {
+    margin-top: 20px;
+}
+
+.results h3 {
+    margin-top: 0;
+    font-family: 'Oswald', sans-serif;
+}
+
+/* Chart styles */
+.resultsChart {
+    background-color: #FFFFFF;
+    border: 1px solid #010000;
+    border-radius: 5px;
+    padding: 50px;
+}
