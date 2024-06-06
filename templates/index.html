@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sports Betting AI</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Montserrat:wght@400;700&family=Oswald:wght@400;700&display=swap">
+</head>
+<body>
+    <header>
+        <h1>Sports Betting AI</h1>
+        <nav>
+            <a href="#about">About</a>
+            <a href="#premier-league">Premier League</a>
+            <a href="#nba">NBA</a>
+            <a href="#nfl">NFL</a>
+            <a href="#ufc">UFC</a>
+        </nav>
+    </header>
+
+    <section id="about">
+        <h2>About</h2>
+        <p>This project aims to predict the outcome of various sporting events using AI models. You can input the names of the home and away teams or players, and the AI will predict the probability of each side winning.</p>
+    </section>
+
+    <section id="premier-league" class="sport-section">
+        <h2>Premier League</h2>
+        <form class="predictionForm">
+            <label for="pl_home_side">Home Side:</label>
+            <input type="text" id="pl_home_side" name="home_side" required>
+
+            <label for="pl_away_side">Away Side:</label>
+            <input type="text" id="pl_away_side" name="away_side" required>
+
+            <button type="submit" data-model-type="premier-league">Predict</button>
+        </form>
+        <div class="results">
+            <h3>Results</h3>
+            <canvas class="resultsChart"></canvas>
+        </div>
+    </section>
+
+    <section id="nba" class="sport-section">
+        <h2>NBA</h2>
+        <form class="predictionForm">
+            <label for="nba_home_side">Home Side:</label>
+            <input type="text" id="nba_home_side" name="home_side" required>
+
+            <label for="nba_away_side">Away Side:</label>
+            <input type="text" id="nba_away_side" name="away_side" required>
+
+            <button type="submit" data-model-type="nba">Predict</button>
+        </form>
+        <div class="results">
+            <h3>Results</h3>
+            <canvas class="resultsChart"></canvas>
+        </div>
+    </section>
+
+    <section id="nfl" class="sport-section">
+        <h2>NFL</h2>
+        <form class="predictionForm">
+            <label for="nfl_home_side">Home Side:</label>
+            <input type="text" id="nfl_home_side" name="home_side" required>
+
+            <label for="nfl_away_side">Away Side:</label>
+            <input type="text" id="nfl_away_side" name="away_side" required>
+
+            <button type="submit" data-model-type="nfl">Predict</button>
+        </form>
+        <div class="results">
+            <h3>Results</h3>
+            <canvas class="resultsChart"></canvas>
+        </div>
+    </section>
+
+    <section id="ufc" class="sport-section">
+        <h2>UFC</h2>
+        <form class="predictionForm">
+            <label for="ufc_home_side">Fighter 1:</label>
+            <input type="text" id="ufc_home_side" name="home_side" required>
+
+            <label for="ufc_away_side">Fighter 2:</label>
+            <input type="text" id="ufc_away_side" name="away_side" required>
+
+            <button type="submit" data-model-type="ufc">Predict</button>
+        </form>
+        <div class="results">
+            <h3>Results</h3>
+            <canvas class="resultsChart"></canvas>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+</body>
+</html>
