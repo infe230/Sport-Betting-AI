@@ -16,6 +16,8 @@ Random Forest Results:
 Accuracy: 0.6967792615868028
 Mean Squared Error: 0.3032207384131972
 Mean Absolute Error: 0.3032207384131972
+Accuracy with Tuning: 0.7007069913589945
+Change: +0.01
 
 Logistic Regression Results:
 Accuracy: 0.7124901806755696
@@ -26,6 +28,8 @@ Decision Tree Results:
 Accuracy: 0.608012568735271
 Mean Squared Error: 0.391987431264729
 Mean Absolute Error: 0.391987431264729
+Accuracy with Tuning: 0.6755695208169678
+Change: +0.07
 
 Neural Network Results:
 Accuracy: 0.6417910447761194
@@ -87,9 +91,9 @@ x_Train, x_Test, y_Train, y_Test = train_test_split(x, y, test_size=0.2, shuffle
 # models to be tested
 models = {
     'Linear Regression': LinearRegression(),
-    'Random Forest': RandomForestClassifier(random_state=92003),
+    'Random Forest': RandomForestClassifier(random_state=92003, n_estimators = 141, max_depth = 7, min_samples_split = 3, min_samples_leaf = 4),
     'Logistic Regression': LogisticRegression(max_iter=4000),
-    'Decision Tree': DecisionTreeClassifier(random_state=92003),
+    'Decision Tree': DecisionTreeClassifier(random_state=92003, max_depth = 5, min_samples_split = 2, min_samples_leaf = 14),
     'Neural Network': MLPClassifier(hidden_layer_sizes=(100,), max_iter=4000, random_state=92003)
 }
 
@@ -125,3 +129,37 @@ for model_name, model in models.items():
         best_model = model
 
 print(f'The best model is: {best_model_name} with an accuracy of {best_accuracy}')
+
+
+def predict_winner_ufc(r_fighter, b_fighter, data, label_encoders):
+    # Encode fighter names
+    r_fighter_encoded = label_encoders['r_fighter'].transform([r_fighter])[0]
+    b_fighter_encoded = label_encoders['b_fighter'].transform([b_fighter])[0]
+
+    # Fetching stats for both fighters
+    r_fighter_stats = data[data['r_fighterEncoded'] == r_fighter_encoded].iloc[0]
+    b_fighter_stats = data[data['b_fighterEncoded'] == b_fighter_encoded].iloc[0]
+
+    # Creating input for prediction
+    input_data = np.array([
+        r_fighter_stats['event_nameEncoded'], r_fighter_encoded, b_fighter_encoded, r_fighter_stats['weight_classEncoded'], 
+        r_fighter_stats['is_title_boutEncoded'], r_fighter_stats['genderEncoded'], r_fighter_stats['r_wins_total'], 
+        r_fighter_stats['r_losses_total'], r_fighter_stats['r_age'], r_fighter_stats['r_height'], r_fighter_stats['r_weight'], 
+        r_fighter_stats['r_reach'], r_fighter_stats['r_stanceEncoded'], r_fighter_stats['r_SLpM_total'], r_fighter_stats['r_SApM_total'], 
+        r_fighter_stats['r_sig_str_acc_total'], r_fighter_stats['r_td_acc_total'], r_fighter_stats['r_str_def_total'], 
+        r_fighter_stats['r_td_def_total'], r_fighter_stats['r_sub_avg'], r_fighter_stats['r_td_avg'], b_fighter_stats['b_wins_total'], 
+        b_fighter_stats['b_losses_total'], b_fighter_stats['b_age'], b_fighter_stats['b_height'], b_fighter_stats['b_weight'], 
+        b_fighter_stats['b_reach'], b_fighter_stats['b_stanceEncoded'], b_fighter_stats['b_SLpM_total'], b_fighter_stats['b_SApM_total'], 
+        b_fighter_stats['b_sig_str_acc_total'], b_fighter_stats['b_td_acc_total'], b_fighter_stats['b_str_def_total'], 
+        b_fighter_stats['b_td_def_total'], b_fighter_stats['b_sub_avg'], b_fighter_stats['b_td_avg']
+    ]).reshape(1, -1)
+
+    # Predict probabilities
+    probabilities = model.predict_proba(input_data)[0]
+    result = {
+        'home_win_prob': probabilities[0],
+        'draw_prob': 0,  # Assuming UFC predictions do not consider draw probability
+        'away_win_prob': probabilities[1]
+    }
+    
+    return result
