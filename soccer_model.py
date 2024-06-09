@@ -3,7 +3,7 @@ PREMIER LEAGUE (SOCCER) MODEL
 
 Standard Performance:  Logistic Regression + Decision Tree = 70% test accuracy
 Desired Performance: 65%
-Achieved Performance: 56%
+Achieved Performance: 57%
 
 Results from running Code:
 
@@ -11,6 +11,8 @@ Random Forest Results:
 Accuracy: 0.5522788203753352
 Mean Squared Error: 1.0107238605898123
 Mean Absolute Error: 0.6353887399463807
+Accuracy with Tuning: 0.5630026809651475
+Change: +0.01
 
 Linear Regression Results:
 Accuracy: 0.3646112600536193
@@ -26,6 +28,8 @@ Decision Tree Results:
 Accuracy: 0.4691689008042895
 Mean Squared Error: 1.1742627345844503
 Mean Absolute Error: 0.7453083109919572
+Accuracy with Tuning: 0.5603217158176944
+Change: +0.09
 
 Neural Network Results:
 Accuracy: 0.5710455764075067
@@ -117,10 +121,10 @@ x_Train, x_Test, y_Train, y_Test = train_test_split(x, y, test_size=0.2, shuffle
 
 # models to be tested
 models = {
-    'Random Forest': RandomForestClassifier(random_state=92002),
+    'Random Forest': RandomForestClassifier(random_state=92002, n_estimators=59, max_depth=3, min_samples_split=2, min_samples_leaf=9),
     'Linear Regression': LinearRegression(),
     'Logistic Regression': LogisticRegression(max_iter=3000),
-    'Decision Tree': DecisionTreeClassifier(random_state=92002),
+    'Decision Tree': DecisionTreeClassifier(random_state=92002, max_depth= 3, min_samples_split=2, min_samples_leaf = 17),
     'Neural Network': MLPClassifier(hidden_layer_sizes=(100,), max_iter=4000, random_state=92003)
 
 }
@@ -160,6 +164,10 @@ print(f'The best model is: {best_model_name} with an accuracy of {best_accuracy}
 
 
 def predict_winner_soccer(home_team, away_team, data, label_encoders):
+    # Check if 'HomeTeam' and 'AwayTeam' encoders exist
+    if 'HomeTeam' not in label_encoders or 'AwayTeam' not in label_encoders:
+        raise KeyError("The label encoders for 'HomeTeam' or 'AwayTeam' are not found.")
+
     # Encode team names
     home_team_encoded = label_encoders['HomeTeam'].transform([home_team])[0]
     away_team_encoded = label_encoders['AwayTeam'].transform([away_team])[0]
@@ -194,8 +202,25 @@ def predict_winner_soccer(home_team, away_team, data, label_encoders):
         away_stats['AvgHomeTeamRedCards_Away'], away_stats['AvgAwayTeamRedCards_Away']
     ]).reshape(1, -1)
 
+    # Convert input data to DataFrame with the same column names as the training data
+    feature_names = [
+        'HomeTeamEncoded', 'AwayTeamEncoded', 'RefereeEncoded', 'B365HomeTeam', 'B365Draw', 'B365AwayTeam',
+        'B365Over2.5Goals', 'B365Under2.5Goals', 'MarketMaxHomeTeam', 'MarketMaxDraw', 'MarketMaxAwayTeam',
+        'MarketAvgHomeTeam', 'MarketAvgDraw', 'MarketAvgAwayTeam', 'MarketMaxOver2.5Goals', 'MarketMaxUnder2.5Goals',
+        'MarketAvgOver2.5Goals', 'MarketAvgUnder2.5Goals', 'AvgFullTimeHomeTeamGoals_Home', 'AvgFullTimeAwayTeamGoals_Home',
+        'AvgHalfTimeHomeTeamGoals_Home', 'AvgHalfTimeAwayTeamGoals_Home', 'AvgHomeTeamShots_Home', 'AvgAwayTeamShots_Home',
+        'AvgHomeTeamShotsOnTarget_Home', 'AvgAwayTeamShotsOnTarget_Home', 'AvgHomeTeamCorners_Home', 'AvgAwayTeamCorners_Home',
+        'AvgHomeTeamFouls_Home', 'AvgAwayTeamFouls_Home', 'AvgHomeTeamYellowCards_Home', 'AvgAwayTeamYellowCards_Home',
+        'AvgHomeTeamRedCards_Home', 'AvgAwayTeamRedCards_Home', 'AvgFullTimeHomeTeamGoals_Away', 'AvgFullTimeAwayTeamGoals_Away',
+        'AvgHalfTimeHomeTeamGoals_Away', 'AvgHalfTimeAwayTeamGoals_Away', 'AvgHomeTeamShots_Away', 'AvgAwayTeamShots_Away',
+        'AvgHomeTeamShotsOnTarget_Away', 'AvgAwayTeamShotsOnTarget_Away', 'AvgHomeTeamCorners_Away', 'AvgAwayTeamCorners_Away',
+        'AvgHomeTeamFouls_Away', 'AvgAwayTeamFouls_Away', 'AvgHomeTeamYellowCards_Away', 'AvgAwayTeamYellowCards_Away',
+        'AvgHomeTeamRedCards_Away', 'AvgAwayTeamRedCards_Away'
+    ]
+    input_df = pd.DataFrame(input_data, columns=feature_names)
+
     # Predict probabilities
-    probabilities = best_model.predict_proba(input_data)[0]
+    probabilities = best_model.predict_proba(input_df)[0]
     result = {
         'home_win_prob': probabilities[0],
         'draw_prob': probabilities[1],
