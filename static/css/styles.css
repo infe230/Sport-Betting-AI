@@ -9,7 +9,7 @@ body {
 
 /* Header styles */
 header {
-    background-color: #E73725;
+    background-color: #007dae;
     color: #FFFFFF;
     padding: 1rem 0;
     text-align: center;
@@ -78,7 +78,7 @@ form input {
 
 form button {
     padding: 10px;
-    background-color: #E73725;
+    background-color: #007dae;
     color: #FFFFFF;
     border: none;
     cursor: pointer;
