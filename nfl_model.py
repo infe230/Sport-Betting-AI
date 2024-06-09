@@ -16,6 +16,8 @@ Decision Tree Results:
 Accuracy: 0.5
 Mean Squared Error: 0.5
 Mean Absolute Error: 0.5
+Accuracy with Tuning: 0.59
+Change: +.09
 
 Random Forest Results:
 Accuracy: 0.6363636363636364
@@ -83,8 +85,8 @@ x_Train, x_Test, y_Train, y_Test = train_test_split(x, y, test_size=0.2, shuffle
 
 # models to be tested
 log_reg = LogisticRegression(max_iter=1000, random_state=92003)
-dt = DecisionTreeClassifier(random_state=92003)
-rf = RandomForestClassifier(random_state=92003, n_jobs=-1)
+dt = DecisionTreeClassifier(random_state=92003, max_depth=1, min_samples_split=2, min_samples_leaf=1)
+rf = RandomForestClassifier(random_state=92003, n_estimators = 150, max_depth = 1, min_samples_split = 2, min_samples_leaf = 3)
 nn = MLPClassifier(hidden_layer_sizes=(100,), max_iter=4000, random_state=92003)
 
 
@@ -150,7 +152,7 @@ if accuracy_ensemble > best_accuracy:
 
 print(f'The best model is: {best_model_name} with an accuracy of {best_accuracy}')
 
-def predict_winner_nfl(home_team, away_team, data, label_encoders, best_model):
+def predict_winner_nfl(home_team, away_team, data, label_encoders):
     # Encode team names
     home_team_encoded = label_encoders['HomeTeam'].transform([home_team])[0]
     away_team_encoded = label_encoders['AwayTeam'].transform([away_team])[0]
@@ -176,6 +178,43 @@ def predict_winner_nfl(home_team, away_team, data, label_encoders, best_model):
     result = {
         'home_win_prob': probabilities[0],
         'draw_prob': 0,  # Assuming NFL predictions do not consider draw probability
+        'away_win_prob': probabilities[1]
+    }
+    
+    return result
+def predict_winner_nfl(home_team, away_team, data, label_encoders):
+    # Encode team names
+    home_team_encoded = label_encoders['team_home'].transform([home_team])[0]
+    away_team_encoded = label_encoders['team_away'].transform([away_team])[0]
+
+    # Fetching data for both teams
+    home_team_data = data[data['team_homeEncoded'] == home_team_encoded].iloc[0]
+    away_team_data = data[data['team_awayEncoded'] == away_team_encoded].iloc[0]
+
+    # Creating input for prediction
+    input_data = np.array([
+        home_team_data['schedule_season'], home_team_data['schedule_playoffEncoded'],
+        home_team_encoded, away_team_encoded, home_team_data['team_favorite_idEncoded'],
+        home_team_data['spread_favorite'], home_team_data['over_under_line'], home_team_data['stadiumEncoded'],
+        home_team_data['stadium_neutralEncoded'], home_team_data['weather_temperature'], home_team_data['weather_wind_mph'], home_team_data['weather_humidity']
+    ]).reshape(1, -1)
+
+    # Convert input data to DataFrame with the same column names as the training data
+    feature_names = [
+        'schedule_season', 'schedule_playoffEncoded', 'team_homeEncoded', 'team_awayEncoded', 'team_favorite_idEncoded',
+        'spread_favorite', 'over_under_line', 'stadiumEncoded', 'stadium_neutralEncoded', 'weather_temperature',
+        'weather_wind_mph', 'weather_humidity'
+    ]
+    input_df = pd.DataFrame(input_data, columns=feature_names)
+
+    # Ensure all data is numeric
+    input_df = input_df.apply(pd.to_numeric)
+
+    # Predict probabilities
+    probabilities = best_model.predict_proba(input_df)[0]
+    result = {
+        'home_win_prob': probabilities[0],
+        'draw_prob': 0,
         'away_win_prob': probabilities[1]
     }
     
