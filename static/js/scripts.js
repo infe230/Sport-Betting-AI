@@ -19,6 +19,22 @@ document.querySelectorAll('.predictionForm').forEach(form => {
         })
         .then(response => response.json())
         .then(data => {
+            homeWinProb = data.predictions.home_win_prob;
+            awayWinProb = data.predictions.away_win_prob;
+            let message = "";
+
+            if (homeWinProb > .80 || awayWinProb > .80) {
+                message = "Bet ur life on this one.";
+            } else if (homeWinProb > .70 || awayWinProb > .70) {
+                message = "We definitely cashing out this parlay.";
+            } else if (homeWinProb > .60 || awayWinProb > .60) {
+                message = "Yeah I mean you could take this bet but ion know for sure just letting you know.";
+            } else if (homeWinProb > .50 || awayWinProb > .50) {
+                message = "Lowkey idk if this is the bet to make you rich.";
+            } else {
+                message = "Highkey I got no idea you should probably go bet on sumn else";
+            }
+
             const ctx = e.target.nextElementSibling.querySelector('.resultsChart').getContext('2d');
             new Chart(ctx, {
                 type: 'bar',
@@ -76,6 +92,10 @@ document.querySelectorAll('.predictionForm').forEach(form => {
                     }
                 }
             });
+            const messageContainer = document.createElement('div');
+            messageContainer.textContent = message;
+            messageContainer.style.fontSize = '18px';
+            e.target.nextElementSibling.appendChild(messageContainer);
         });
     });
 });
